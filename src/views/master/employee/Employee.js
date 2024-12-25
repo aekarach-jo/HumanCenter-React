@@ -49,39 +49,59 @@ const Employee = () => {
   const roleResources = JSON.parse(token)?.user?.role_resources;
   const role = roleResources?.find((item) => item.resource_name.toLowerCase() === 'bill');
 
+  const handleChangeStatus = async (data, e) => {
+    const formData = {
+      employee_no: data?.employee_no,
+      national_card_no: data?.national_card_no,
+      username: data?.username,
+      password: data?.password,
+      blacklist: data?.blacklist,
+      active: e,
+      roles: data?.roles,
+      bank_account_no: data?.bank_account_no,
+      company_id: data?.company_id,
+    };
+
+    console.log(formData);
+
+    // await request({ url: `/employees/${id}`, method: 'PUT' });
+    // refetch();
+    // setIsDeleting(false);
+  };
+
   const columns = useMemo(() => {
     return [
-      {
-        Header: 'ปี',
-        accessor: 'year',
-        sortable: false,
-        headerClassName: 'text-medium text-muted-re',
-        Cell: ({ cell }) => <div className="text-medium">{moment.utc(cell?.value || new Date()).format('YYYY') || '-'}</div>,
-      },
-      {
-        Header: 'เดือน',
-        accessor: 'month',
-        sortable: false,
-        headerClassName: 'text-medium text-muted-re',
-        Cell: ({ cell }) => {
-          const month = moment.utc(cell?.value || new Date()).format('MM');
-          const monthNames = [
-            'มกราคม',
-            'กุมภาพันธ์',
-            'มีนาคม',
-            'เมษายน',
-            'พฤษภาคม',
-            'มิถุนายน',
-            'กรกฎาคม',
-            'สิงหาคม',
-            'กันยายน',
-            'ตุลาคม',
-            'พฤศจิกายน',
-            'ธันวาคม',
-          ];
-          return <div className="text-medium">{monthNames[parseInt(month, 10) - 1] || '-'}</div>;
-        },
-      },
+      // {
+      //   Header: 'ปี',
+      //   accessor: 'year',
+      //   sortable: false,
+      //   headerClassName: 'text-medium text-muted-re',
+      //   Cell: ({ cell }) => <div className="text-medium">{moment.utc(cell?.value || new Date()).format('YYYY') || '-'}</div>,
+      // },
+      // {
+      //   Header: 'เดือน',
+      //   accessor: 'month',
+      //   sortable: false,
+      //   headerClassName: 'text-medium text-muted-re',
+      //   Cell: ({ cell }) => {
+      //     const month = moment.utc(cell?.value || new Date()).format('MM');
+      //     const monthNames = [
+      //       'มกราคม',
+      //       'กุมภาพันธ์',
+      //       'มีนาคม',
+      //       'เมษายน',
+      //       'พฤษภาคม',
+      //       'มิถุนายน',
+      //       'กรกฎาคม',
+      //       'สิงหาคม',
+      //       'กันยายน',
+      //       'ตุลาคม',
+      //       'พฤศจิกายน',
+      //       'ธันวาคม',
+      //     ];
+      //     return <div className="text-medium">{monthNames[parseInt(month, 10) - 1] || '-'}</div>;
+      //   },
+      // },
       {
         Header: 'รหัสพนักงาน',
         accessor: 'employee_no',
@@ -104,25 +124,62 @@ const Employee = () => {
         Cell: ({ cell }) => <div className="text-medium">{cell.value || '-'}</div>,
       },
       {
-        Header: 'จัดการข้อมูล',
-        accessor: 'action',
+        Header: 'บริษัท',
+        accessor: 'company',
         sortable: false,
         headerClassName: 'text-medium text-muted-re',
-        Cell: ({ cell, row }) => (
-          <div className="text-medium d-flex flex-row justify-content-center gap-1 icon-hover" style={{ width: '4rem' }}>
-            <div>
-              <NavLink to={`/master/employee-detail/${row.original.id}`} className=" text-truncate h-100 d-flex align-items-center">
-                <img src="/img/icons/show.png" alt="show" style={role?.can_view === 0 ? { opacity: '0.5' } : { cursor: 'pointer' }} />
-              </NavLink>
+        Cell: ({ cell }) => <div className="text-medium">{cell?.row?.original?.company?.name_th || '-'}</div>,
+      },
+      {
+        Header: 'เบอร์โทร',
+        accessor: 'telephone',
+        sortable: false,
+        headerClassName: 'text-medium text-muted-re',
+        Cell: ({ cell }) => <div className="text-medium">-</div>,
+      },
+      {
+        Header: 'วันเริ่มงาน',
+        accessor: 'start_at',
+        sortable: false,
+        headerClassName: 'text-medium text-muted-re',
+        Cell: ({ cell }) => <div className="text-medium">{cell.value || '-'}</div>,
+      },
+      {
+        Header: 'จัดการข้อมูล',
+        accessor: 'active',
+        sortable: false,
+        headerClassName: 'text-medium text-muted-re',
+        Cell: ({ cell, row }) => {
+          return (
+            <div className="text-medium d-flex flex-row justify-content-center align-items-center gap-2 icon-hover" style={{ width: '4rem' }}>
+              <div>
+                <NavLink to={`/master/employee-detail/${row.original.id}`} className=" text-truncate h-100 d-flex align-items-center">
+                  <img src="/img/icons/show.png" alt="show" style={role?.can_view === 0 ? { opacity: '0.5' } : { cursor: 'pointer' }} />
+                </NavLink>
+              </div>
+              <div>
+                <NavLink to={`/master/employee-detail/${row.original.id}`} className=" text-truncate h-100 d-flex align-items-center">
+                  <img src="/img/icons/edit.png" alt="sheditow" style={role?.can_view === 0 ? { opacity: '0.5' } : { cursor: 'pointer' }} />
+                </NavLink>
+              </div>
+              <Form.Check
+                className="m-0"
+                style={{ minHeight: '0rem' }}
+                defaultChecked={row.original?.active === '1'}
+                onChange={(e) => {
+                  cell.value = e.target.checked ? '1' : '0';
+                  handleChangeStatus(row.original, e.target.checked ? '1' : '0');
+                }}
+                type="switch"
+                label=""
+                // hidden={!isEditMode}
+              />
             </div>
-            {/* <div className="cursor-pointer">
-              <img src="/img/icons/edit.png" alt="edit" />
-            </div> */}
-          </div>
-        ),
+          );
+        },
       },
     ];
-  }, [f]);
+  }, [role?.can_view]);
 
   const tableInstance = useTable(
     {
@@ -268,17 +325,7 @@ const Employee = () => {
         addButton={{ label: 'Add', link: '/master/employee-detail/new' }}
         isHideBtnAdd={role?.can_create === 0}
       />
-      <Table
-        tableInstance={tableInstance}
-        isLoading={isFetching}
-        hideControlsDateRange
-        hideControlsStatusParcel
-        hideControlsStatusVerify
-        hideControlsStatus
-        isShipping={selectToShipping.length > 0}
-        onClickShipped={setShow}
-        statusOptions={options}
-      />
+      <Table tableInstance={tableInstance} isLoading={isFetching} hideControlSearch hideControlsStatus isSearchButton isEmployee />
       <ConfirmModal
         show={show}
         className="rounded-sm"

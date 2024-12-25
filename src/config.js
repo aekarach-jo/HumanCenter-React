@@ -1,6 +1,6 @@
 import { LAYOUT, MENU_BEHAVIOUR, NAV_COLOR, MENU_PLACEMENT, RADIUS, THEME_COLOR, USER_ROLE } from 'constants.js';
 
-export const IS_DEMO = true;
+export const IS_DEMO = false;
 export const IS_AUTH_GUARD_ACTIVE = true;
 export const USE_MULTI_LANGUAGE = true;
 
@@ -39,7 +39,7 @@ export const DEFAULT_USER = {
   id: 1,
   name: 'Lisa Jackson',
   thumb: '/img/profile/profile-2.webp',
-  role: USER_ROLE.Admin,
+  role: USER_ROLE.ADMIN,
   email: 'lisajackson@gmail.com',
 };
 

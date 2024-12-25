@@ -13,17 +13,16 @@ import queryClient from 'utils/query-client';
 import { useSelector } from 'react-redux';
 
 const App = () => {
-  // const { currentUser, isLogin } = useSelector((state) => state.auth);
   const { token, isLoading } = useToken();
   const { currentUser } = useSelector((state) => state.auth);
+
   const isLogin = !!token;
-  const routes = useMemo(() => getRoutes({ data: routesAndMenuItems, isLogin, userRole: currentUser.role }), [currentUser.role, isLogin]);
+  const routes = useMemo(() => getRoutes({ data: routesAndMenuItems, isLogin, userRole: 'admin' }), [currentUser?.user?.roles, isLogin]);
   const fallback = useMemo(() => <Loading />, []);
   if (routes) {
     return (
       <QueryClientProvider client={queryClient}>
         <Layout>{isLoading ? fallback : <RouteIdentifier routes={routes} fallback={fallback} />}</Layout>
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>
     );
   }

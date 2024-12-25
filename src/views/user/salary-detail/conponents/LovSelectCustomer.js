@@ -1,44 +1,39 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 // import AsyncSelect from 'react-select/async';
 import Select from 'react-select';
+import useProductLovData from 'hooks/api/master/lov/useProductLov';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
-import { SERVICE_URL } from 'config';
 import { request } from 'utils/axios-utils';
+import { useQuery } from 'react-query';
 
-const searchCompany = async () => {
-  const res = await request({
-    url: `${SERVICE_URL}/companys`,
-    params: { filters: `type:eq:branch` },
-  });
-  return res.data.data;
+const searchPhoneFn = async (query) => {
+  const resp = await request({ url: `/customer`, params: { filters: `active:eq:1,verify:eq:1` } });
+  return resp.data.data;
 };
 
-const useGetCompanyList = () => {
-  const searchCompanyList = useQuery(['company'], () => searchCompany(), {
+const useAutocomplete = () => {
+  const q = useQuery([`customerAutocompleteData`], () => searchPhoneFn(), {
     enabled: true,
     refetchOnWindowFocus: false,
-    onSuccess() {},
-    onError(err) {
-      console.error('Error fetching list', err);
-    },
+    cacheTime: 0,
   });
-  return searchCompanyList;
+  return q;
 };
 
 function mapOptions(lovList, lovLabel, lovValue) {
   return (lovList || []).map((lov) => ({
     label: lov[lovLabel],
     value: lov[lovValue],
+    detail: lov,
   }));
 }
 
-const LovSelectCompany = ({
+const LovCustomerSelect = ({
   name,
   value,
   lov,
-  lovLabel = 'name_en',
-  lovValue = 'id',
+  lovLabel = 'phone',
+  lovValue = 'phone',
   isClearable,
   isDisabled,
   onChange,
@@ -49,12 +44,19 @@ const LovSelectCompany = ({
   const { formatMessage: f } = useIntl();
 
   const [internalValue, setInternalValue] = useState();
-  const { data, isFetching } = useGetCompanyList();
-  const selectPlaceholder = useMemo(() => placeholder || f({ id: 'common.select-placeholder' }), [f, placeholder]);
+  const { data, isFetching, refetch } = useAutocomplete();
 
+  const selectPlaceholder = useMemo(() => placeholder || f({ id: 'common.select-placeholder' }), [f, placeholder]);
   const options = useMemo(() => {
     return mapOptions(data || [], lovLabel, lovValue);
   }, [data, lov, lovLabel, lovValue]);
+
+  // useEffect(() => {
+  //   refetch();
+  //   if (!isFetching) {
+  //     props.setValueChange(false);
+  //   }
+  // }, [props.valueChange]);
 
   useEffect(() => {
     const findOption = options?.find((item) => item.value === value);
@@ -64,7 +66,7 @@ const LovSelectCompany = ({
   const internalOnChange = useCallback(
     (e) => {
       const { value: _value } = e || {};
-      onChange?.(_value);
+      onChange?.(e);
     },
     [onChange]
   );
@@ -86,4 +88,4 @@ const LovSelectCompany = ({
   );
 };
 
-export default LovSelectCompany;
+export default LovCustomerSelect;

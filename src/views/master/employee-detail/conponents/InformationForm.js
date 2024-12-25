@@ -176,6 +176,8 @@ const InformationForm = ({ id, mode }) => {
   };
 
   const handleSave = () => {
+    console.log(values);
+    
     var data = {
       id: values?.id,
       employee_no: values.employee_no,
@@ -194,7 +196,7 @@ const InformationForm = ({ id, mode }) => {
       blacklist: values.blacklist,
       active: values.active,
       roles: values.roles?.value ? values.roles?.value : values.roles,
-      bank_account_no: values.bank_account_no,
+      bank_account_no: values.bank_account_no || values.bank_id,
       company_id: Number(values.company_id),
       bank_id: Number(values.bank_id),
     };

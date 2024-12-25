@@ -1,0 +1,153 @@
+.container {
+    width: 100%;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+.header-section {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 10px;
+}
+
+.header-section h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+.header-section img {
+    width: 120px;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 12px;
+}
+
+.attendance-table th,
+.attendance-table td {
+    padding: 8px;
+    height: 40px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.attendance-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.highlight-green {
+    background-color: #d9ead3;
+}
+
+.highlight-orange {
+    background-color: #f9cb9c;
+}
+
+.highlight-yellow {
+    background-color: #ffe599;
+}
+
+.highlight-blue {
+    background-color: #c9daf8;
+}
+
+.highlight-lightgreen {
+    background-color: #d0e0e3;
+}
+
+.request-details {
+    margin-top: 2rem;
+    width: 50%;
+
+    p {
+        margin-bottom: 5px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 6rem;
+        padding: 8px;
+    }
+}
+
+/* Buttons */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.action-buttons button {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+}
+
+.btn-back {
+    background-color: #f1c232;
+}
+
+.btn-submit {
+    background-color: #76a5af;
+}
+
+.col-day-size {
+    min-width: 150px;
+}
+
+.col-size {
+    min-width: 120px;
+}
+
+.text-small {
+    font-size: 10px
+}
+
+.mantfact-text-style {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+}
+
+.img-logo {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.img-logo img {
+    width: 140px;
+    height: 65px;
+    border-radius: 50%;
+}
+
+@media (max-width: 1200px) {
+
+    .request-details {
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    .header-section h1 {
+        font-size: 16px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+}

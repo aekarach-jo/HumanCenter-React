@@ -255,17 +255,7 @@ const BlackList = () => {
         // addButton={{ label: f({ id: 'bill.field.add' }), link: '/bill/new' }}
         isHideBtnAdd={role?.can_create === 0}
       />
-      <Table
-        tableInstance={tableInstance}
-        isLoading={isFetching}
-        hideControlsDateRange
-        hideControlsStatusParcel
-        hideControlsStatusVerify
-        hideControlsStatus
-        isShipping={selectToShipping.length > 0}
-        onClickShipped={setShow}
-        statusOptions={options}
-      />
+      <Table tableInstance={tableInstance} isLoading={isFetching} hideControlSearch hideControlsStatus isSearchButton isEmployee />
       <ConfirmModal
         show={show}
         className="rounded-sm"

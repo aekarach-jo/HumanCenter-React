@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { SERVICE_URL } from 'config';
 import { request } from 'utils/axios-utils';
+import { filter } from 'lodash';
 
 const searchCompany = async () => {
   const res = await request({

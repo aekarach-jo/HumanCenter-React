@@ -14,7 +14,7 @@ const Title = ({
   showCheckAll,
   bgColor = '',
   customStyle,
-  fontStyle,
+  isDisabled = true,
   isHideBtnAdd = false,
 }) => {
   const history = useHistory();
@@ -141,7 +141,7 @@ const Title = ({
               <Button
                 variant="primary"
                 className="btn-icon btn-icon-start w-100 w-md-auto mb-1 ms-1 rounded-sm"
-                disabled={isLoading}
+                disabled={!isDisabled || isLoading}
                 onClick={() => buttons?.import?.onSubmit()}
               >
                 <span>{buttons?.import?.label || 'Import'}</span>

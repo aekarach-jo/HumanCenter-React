@@ -100,12 +100,12 @@ const Home = () => {
   };
 
   return (
-    <>
-      <div className="profile-container">
+    <Card>
+      <div className="profile-container px-2">
         <div className="wrap-img">
           <img src="/img/blank/blank-profile.png" alt="Profile Picture" />
         </div>
-        <table className="profile-table">
+        <table className="profile-table mb-6">
           <tr>
             <th>ชื่อ - นามสกุล</th>
             <td>{`${values?.first_name_th} ${values?.last_name_th}`}</td>
@@ -141,7 +141,7 @@ const Home = () => {
           </tr>
         </table>
       </div>
-    </>
+    </Card>
   );
 };
 

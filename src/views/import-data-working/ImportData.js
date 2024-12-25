@@ -21,7 +21,7 @@ const callImportData = async (data = {}, dateRage) => {
     formData.append('end_at', dateRage.endAt);
   }
 
-  const res = await request({ url: `/working/import`, method: 'POST', data: formData });
+  const res = await request({ url: `/workings/import`, method: 'POST', data: formData });
   return res;
 };
 
@@ -98,6 +98,7 @@ const ImportData = () => {
           cancel: { label: f({ id: 'common.cancel' }), onCancel: () => setCancalFiles(true) },
           import: { label: f({ id: 'common.import' }), onSubmit: () => saveFile(files) },
         }}
+        isDisabled={files}
       />
       <Col md="4" className="mb-2">
         <Form.Label className="px-2 m-0 fs-7">{f({ id: 'common.dateRange' })}</Form.Label>

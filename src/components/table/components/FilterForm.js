@@ -3,120 +3,75 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import Select from 'react-select';
-import { DatepickerRangeSingle } from 'components/datepicker/DatepickerRange';
+import { useFormik } from 'formik';
+import LovSelectCompany from 'components/lov-select/LovSelectCompany';
 import moment from 'moment';
 import ControlsSearch from './ControlsSearch';
+import DatepickerMonth from './DatepickerMonth';
+import DatepickerYear from './DatepickerYear';
 
+const initialValues = { year: '', month: '', company_id: '', employee_no: '', national_card_no: '', status: true };
 const statusOptions = [
-  { value: 1, label: 'Active' },
-  { value: 0, label: 'Inactive' },
+  { value: 'confirmed', label: 'ยืนยันแล้ว' },
+  { value: 'wait_edit', label: 'รอแก้ไข' },
+  { value: 'wait_approve', label: 'รอยืนยัน' },
 ];
+const FilterForm = ({ tableInstance, hideControlSearch, isSelectYear, hideControlsStatus, isLoading, isCompany, isSearchButton, isEmployee }) => {
+  const { gotoPage, setFilter } = tableInstance;
 
-const statusBillOptions = [
-  { value: 'success', label: 'Success' },
-  { value: 'shipped', label: 'Shipped' },
-  { value: 'ready', label: 'Ready' },
-  { value: 'waiting_payment', label: 'Waiting Payment' },
-];
+  const onSubmit = (values) => {
+    let dataResult = {};
 
-const statusParcelOptions = [
-  { value: 'success', label: 'Success' },
-  { value: 'return', label: 'Return' },
-  { value: 'ready', label: 'Ready' },
-  { value: 'pending', label: 'Pending' },
-];
+    if (values) {
+      const filtersArray = [
+        values?.status?.value && `status:eq:${values.status.value}`,
+        values?.employee_no && `employee_no:like:${values.employee_no}`,
+        values?.national_card_no && `national_card_no:like:${values.national_card_no}`,
+      ].filter(Boolean);
 
-const statusVerifyOptions = [
-  { value: 'verify', label: 'Verify' },
-  { value: 'pending', label: 'Pending' },
-];
-
-const statusPaymentOptions = [
-  { value: 'paid', label: 'Paid' },
-  { value: 'pending', label: 'Pending' },
-];
-
-const FilterForm = ({
-  isPaymentStatus,
-  tableInstance,
-  hideControlSearch,
-  isDepartment,
-  isCustomerLevel,
-  hideControlsStatusBill,
-  isVerify,
-  hideControlsStatus,
-  hideControlsStatusVerify,
-  hideControlsStatusParcel,
-  hideControlsDateRange,
-  isShipping,
-  isLoading,
-  isCurrencyDate,
-  onClickShipped,
-}) => {
-  const { formatMessage: f } = useIntl();
-
-  const { gotoPage, setFilter, filter } = tableInstance;
-
-  const onSetFilter = (dataResult, type) => {
-    console.log(dataResult?.value === 'success');
-    if (dataResult?.value === 'success') {
-      setFilter({
-        filters:
-          filter?.filters
-            ?.split(',')
-            .filter((fa) => !fa.includes('status:neq:success'))
-            .join(',') || 'status:eq:success',
-      });
-      return;
-    }
-    let result = dataResult?.detail?.id || dataResult?.value;
-    if (result === 1 && (type === 'active' || type === 'verify')) {
-      result = 1;
-    } else if (result === 0 && (type === 'active' || type === 'verify')) {
-      result = 0;
-    } else if (result === undefined) {
-      result = null;
-    }
-
-    const currentFilter = filter?.filters?.split(',').find((fa) => fa.includes(`${type}:eq:`));
-    if (currentFilter && currentFilter.includes(`${type}:eq:`) && result !== null) {
-      const updatedFilters = filter?.filters
-        .split(',')
-        .filter((fa) => !fa.includes(`${type}:eq:`))
-        .join(',');
-
-      setFilter({ ...filter, filters: `${updatedFilters ? `${updatedFilters},` : ''}${type}:eq:${result}`, page: 0 });
-    } else if (result === null) {
-      const updatedFilters = filter?.filters
-        .split(',')
-        .filter((fa) => !fa.includes(`${type}:eq:`))
-        .join(',');
-      if (updatedFilters) {
-        setFilter({ filters: updatedFilters, page: 0 });
-      } else {
-        setFilter({ ...filter, page: 0, filters: undefined });
+      dataResult = {
+        filters: filtersArray.join(','),
+        company: values?.company_id ? `${values.company_id}` : undefined,
+        year: values?.year !== '' ? `${values.year}` : undefined,
+        month: values?.month !== '' ? `${values.month}` : undefined,
+      };
+      if (!dataResult.filters) {
+        delete dataResult.filters;
       }
-    } else {
-      setFilter({ ...filter, filters: `${`${filter?.filters ? `${filter?.filters},` : ''}`}${type}:eq:${result}`, page: 0 });
+      // if (!dataResult.company) {
+      //   delete dataResult.company;
+      // }
     }
-    if (result === undefined) {
-      setFilter({ page: 0 });
-    }
+    console.log(dataResult);
+
+    setFilter({ ...dataResult, page: 0 });
+    gotoPage(0);
+  };
+  const formik = useFormik({ initialValues, onSubmit });
+  const { handleSubmit, handleChange, values, handleReset } = formik;
+
+  const onReset = (e) => {
+    handleReset(e);
+    setFilter({ page: 0 });
     gotoPage(0);
   };
 
-  const onSetFilterDateRange = (dataResult) => {
-    const startData = dataResult.startDate ? moment(dataResult.startDate).format('YYYY-MM-DD 00:00:00') : null;
-    const endDate = dataResult.endDate ? moment(dataResult.endDate).format('YYYY-MM-DD 23:59:59') : null;
-    if (!startData && !endDate) {
-      setFilter({});
-    } else {
-      setFilter({
-        start_at: `${startData}`,
-        end_at: `${endDate}`,
-      });
+  const handleChangeStatus = (value) => {
+    handleChange({ target: { id: 'status', value } });
+  };
+
+  const handleChangeCompany = (value) => {
+    handleChange({ target: { id: 'company_id', value } });
+  };
+
+  const onSetFilterDate = (dataResult, type) => {
+    if (type === 'year') {
+      const date = dataResult ? moment(dataResult).format('YYYY-01-01 00:00:00') : null;
+      handleChange({ target: { id: 'year', value: moment(date).get('year') } });
+    } else if (type === 'month') {
+      const date = dataResult ? moment(dataResult).format('YYYY-MM-DD 00:00:00') : null;
+      handleChange({ target: { id: 'month', value: moment(date).get('month') + 1 } });
     }
-    gotoPage(0);
   };
 
   return (
@@ -129,84 +84,50 @@ const FilterForm = ({
           </div>
         </Col>
       )}
-      {isDepartment && (
+      {isSelectYear && (
         <Col md="2" sm="12" xs="12">
-          <Form.Label className="px-2 m-0 fs-7">{f({ id: 'user.field.department' })}</Form.Label>
-          <Select isClearable classNamePrefix="react-select" options={isDepartment || []} required onChange={(e) => onSetFilter(e, 'department_id')} />
+          <Form.Label className="px-2 m-0 fs-7">ปี</Form.Label>
+          <DatepickerYear onChange={(e) => onSetFilterDate(e, 'year')} />
         </Col>
       )}
-      {isCustomerLevel && (
+      {isSelectYear && (
         <Col md="2" sm="12" xs="12">
-          <Form.Label className="px-2 m-0 fs-7">{f({ id: 'role.field.level' })}</Form.Label>
-          <Select isClearable classNamePrefix="react-select" options={isCustomerLevel || []} required onChange={(e) => onSetFilter(e, 'customer_level_id')} />
+          <Form.Label className="px-2 m-0 fs-7">เดือน</Form.Label>
+          <DatepickerMonth onChange={(e) => onSetFilterDate(e, 'month')} />
         </Col>
       )}
-      {isVerify && (
+      {isCompany && (
         <Col md="2" sm="12" xs="12">
-          <Form.Label className="px-2 m-0 fs-7">{f({ id: 'role.field.verify' })}</Form.Label>
-          <Select isClearable classNamePrefix="react-select" options={isVerify || []} required onChange={(e) => onSetFilter(e, 'verify')} />
+          <Form.Label className="px-2 m-0 fs-7">บริษัท</Form.Label>
+          <LovSelectCompany isClearable onChange={handleChangeCompany} />
         </Col>
       )}
       {!hideControlsStatus && (
         <Col md="2" sm="12" xs="12">
-          <Form.Label className="px-2 m-0 fs-7">{f({ id: 'common.status' })}</Form.Label>
-          <Select isClearable classNamePrefix="react-select" options={statusOptions || []} required onChange={(e) => onSetFilter(e, 'active')} />
+          <Form.Label className="px-2 m-0 fs-7">สถานะ</Form.Label>
+          <Select isClearable classNamePrefix="react-select" options={statusOptions || []} onChange={(e) => handleChangeStatus(e)} />
         </Col>
       )}
-      {/* {!hideControlsStatusBill && (
-        <Col md="2" sm="12" xs="12">
-          <Form.Label className="px-2 m-0 fs-7">{f({ id: 'common.status' })}</Form.Label>
-          <Select isClearable classNamePrefix="react-select" options={statusBillOptions || []} required onChange={(e) => onSetFilter(e, 'status')} />
-        </Col>
-      )} */}
-      {!hideControlsStatusVerify && (
-        <Col md="2" sm="12" xs="12">
-          <Form.Label className="px-2 m-0 fs-7">{f({ id: 'common.status' })}</Form.Label>
-          <Select isClearable classNamePrefix="react-select" options={statusVerifyOptions || []} required onChange={(e) => onSetFilter(e, 'status')} />
-        </Col>
+      {isEmployee && (
+        <>
+          <Col sm="12" md="12" lg="3">
+            <Form.Label className="col-form-label required">รหัสพนักงาน</Form.Label>
+            <Form.Control type="text" name="employee_no" onChange={handleChange} value={values?.employee_no} />
+          </Col>
+          <Col sm="12" md="12" lg="3">
+            <Form.Label className="col-form-label required">ชื่อ-สกุล</Form.Label>
+            <Form.Control type="text" name="last_name_th" onChange={handleChange} value={values?.last_name_th} />
+          </Col>
+          <Col sm="12" md="12" lg="3">
+            <Form.Label className="col-form-label required">เลขบัตรประชาชน</Form.Label>
+            <Form.Control type="text" name="national_card_no" onChange={handleChange} value={values?.national_card_no} />
+          </Col>
+        </>
       )}
-      {!hideControlsStatusParcel && (
-        <Col md="2" sm="12" xs="12">
-          <Form.Label className="px-2 m-0 fs-7">{f({ id: 'common.status' })}</Form.Label>
-          <Select isClearable classNamePrefix="react-select" options={statusParcelOptions || []} required onChange={(e) => onSetFilter(e, 'status')} />
-        </Col>
-      )}
-      {isPaymentStatus && (
-        <Col md="2" sm="12" xs="12">
-          <Form.Label className="px-2 m-0 fs-7">{f({ id: 'common.status' })}</Form.Label>
-          <Select isClearable classNamePrefix="react-select" options={statusPaymentOptions || []} required onChange={(e) => onSetFilter(e, 'status')} />
-        </Col>
-      )}
-      {!hideControlsDateRange && (
-        <Col md="3" sm="12" xs="12">
-          <Form.Label className="px-2 m-0 fs-7">{f({ id: 'common.dateRange' })}</Form.Label>
-          <DatepickerRangeSingle
-            tableInstance={tableInstance}
-            className="ps-2"
-            onChange={(e) => onSetFilterDateRange(e, { startAt: 'start_at', endAt: 'end_at' })}
-          />
-        </Col>
-      )}
-      {isCurrencyDate && (
-        <Col md="3" sm="12" xs="12">
-          <Form.Label className="px-2 m-0 fs-7">{f({ id: 'common.dateRange' })}</Form.Label>
-          <DatepickerRangeSingle
-            tableInstance={tableInstance}
-            className="ps-2"
-            onChange={(e) => onSetFilterDateRange(e, { startAt: 'start_at', endAt: 'end_at' })}
-            maxDate={moment().add(31, 'days').toDate()}
-          />
-        </Col>
-      )}
-      {isShipping && (
-        <Col md={6} sm="12" xs="12">
-          <Button
-            variant="primary"
-            className="float-end btn-icon btn-icon-start pt-1 w-100 w-md-auto mb-1 ms-1 mt-3 rounded-sm"
-            onClick={() => onClickShipped(true)}
-            disabled={isLoading}
-          >
-            <img src="/img/icons/truck-white.png" alt="truck" /> <span>Shipping</span>
+      {isSearchButton && (
+        <Col md="2" sm="12" xs="12" className="d-flex align-items-end">
+          <Button variant="primary" onClick={() => handleSubmit()} disabled={isLoading}>
+            ค้นหา
           </Button>
         </Col>
       )}

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { isEqual } from 'lodash';
+import { useDispatch } from 'react-redux';
+import { setCurrentUser } from 'auth/authSlice';
 import queryClient from './query-client';
 
 const queryCache = queryClient.getQueryCache();
@@ -95,6 +97,7 @@ function createTokenQuery({ queryKey = 'token', tokenExpired, refreshExpired, se
     stopBackgroundRefreshing();
   };
   const useLogin = () => {
+    const dispatch = useDispatch();
     const [data, setData] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
     const [error, setError] = useState(null);
@@ -107,6 +110,7 @@ function createTokenQuery({ queryKey = 'token', tokenExpired, refreshExpired, se
         setIsFetching(false);
         setData(token);
         setTokenValue(token);
+        dispatch(setCurrentUser(token));
         localStorage.setItem('login_date', new Date());
         return token;
       } catch (loginError) {

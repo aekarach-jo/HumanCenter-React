@@ -4,15 +4,19 @@ import { useLocation, useHistory } from 'react-router-dom';
 import useLayout from 'hooks/useLayout';
 import { useIsMobile } from 'hooks/useIsMobile';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
+import { useDispatch } from 'react-redux';
+import { setCurrentUser } from 'auth/authSlice';
 import NavLanguageSwitcher from './NavLanguageSwitcher';
 import NavMobileButtons from './NavMobileButtons';
 
 const NavBar = ({ children }) => {
   useLayout();
+  const dispatch = useDispatch();
   const { pathname } = useLocation();
   const { push } = useHistory();
   const getName = JSON.parse(localStorage.getItem('token'));
   useEffect(() => {
+    dispatch(setCurrentUser(getName));
     document.documentElement.click();
     window.scrollTo(0, 0);
   }, [pathname]);
@@ -32,7 +36,7 @@ const NavBar = ({ children }) => {
         <Dropdown className="d-inline-block">
           <Dropdown.Toggle className="mb-1 cursor-pointer" as="p" href="#">
             <img src="/img/blank/blank-profile.png" alt="profile" className="rounded-circle mx-2" style={{ width: '39px', height: '39px' }} />
-            {`${getName?.user?.first_name || ''} ${getName?.user?.last_name || ''}`}
+            {`${getName?.user?.first_name_th || ''} ${getName?.user?.last_name_th || ''}`}
           </Dropdown.Toggle>
           <Dropdown.Menu>
             {/* <Dropdown.Item>

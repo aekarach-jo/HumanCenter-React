@@ -1,8 +1,14 @@
 .profile-container {
     max-width: 460px;
+    /* height: 60vh; */
     margin: 0 auto;
     text-align: center;
     font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* border-radius: 10px; */
 }
 
 .profile-container .wrap-img {

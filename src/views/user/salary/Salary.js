@@ -8,31 +8,26 @@ import Table from 'components/table/Table';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { request } from 'utils/axios-utils';
-import { Form } from 'react-bootstrap';
-import { useIntl } from 'react-intl';
 import { useGlobalFilter, usePagination, useRowState, useSortBy, useTable } from 'react-table';
 import ConfirmDeleteModal from 'components/confirm-delete-modal/ConfirmDeleteModal';
 import moment from 'moment';
-import { NavLink } from 'react-router-dom/cjs/react-router-dom';
-import useConvert from 'hooks/useConvert';
 import { toast } from 'react-toastify';
-import ConfirmModal from 'components/confirm-modal/ConfirmModal';
 import SalaryModal from './SalaryModal';
 
-const searchBill = async ({ filter, page = 1, per_page = 10, sortBy = {} }) => {
+const searchSalary = async ({ filter, page = 1, per_page = 10, sortBy = {} }) => {
+  const empNo = JSON.parse(localStorage.getItem('token'));
   const sorts = sortBy.sortField ? `${sortBy.sortField}:${sortBy.sortDirection}` : 'created_at:desc';
 
   const res = await request({
     url: '/salarys',
     method: 'GET',
-    params: { ...filter, per_page, page: page + 1, sorts },
+    params: { filters: `employee_id:eq:${empNo?.user?.id}`, per_page, page: page + 1, sorts },
   });
   return res.data;
 };
 
 const Salary = () => {
-  const { formatMessage: f } = useIntl();
-  const title = 'ข้อมูลเงินเดือน';
+  const title = 'สลิปเงินเดือน';
   const description = '';
 
   const [isDeleting, setIsDeleting] = useState(false);
@@ -55,14 +50,14 @@ const Salary = () => {
         Header: 'ปี',
         accessor: 'year',
         sortable: false,
-        headerClassName: 'text-medium text-muted-re',
-        Cell: ({ cell }) => <div className="text-medium">{moment.utc(cell?.value || new Date()).format('YYYY') || '-'}</div>,
+        headerClassName: 'text-medium text-muted-re text-start',
+        Cell: ({ cell }) => <div className="text-medium text-start">{moment.utc(cell?.value || new Date()).format('YYYY') || '-'}</div>,
       },
       {
         Header: 'เดือน',
         accessor: 'month',
         sortable: false,
-        headerClassName: 'text-medium text-muted-re',
+        headerClassName: 'text-medium text-muted-re text-start',
         Cell: ({ cell }) => {
           const month = moment.utc(cell?.value || new Date()).format('MM');
           const monthNames = [
@@ -79,44 +74,16 @@ const Salary = () => {
             'พฤศจิกายน',
             'ธันวาคม',
           ];
-          return <div className="text-medium">{monthNames[parseInt(month, 10) - 1] || '-'}</div>;
+          return <div className="text-medium text-start">{monthNames[parseInt(month, 10) - 1] || '-'}</div>;
         },
-      },
-      {
-        Header: 'รหัสพนักงาน',
-        accessor: 'employee_no',
-        sortable: false,
-        headerClassName: 'text-medium text-muted-re',
-        Cell: ({ cell }) => <div className="text-medium">{cell.value || '-'}</div>,
-      },
-      {
-        Header: 'ชื่อ',
-        accessor: 'first_name_th',
-        sortable: false,
-        headerClassName: 'text-medium text-muted-re',
-        Cell: ({ cell }) => <div className="text-medium">{cell.value || '-'}</div>,
-      },
-      {
-        Header: 'นามสกุล',
-        accessor: 'last_name_th',
-        sortable: false,
-        headerClassName: 'text-medium text-muted-re',
-        Cell: ({ cell }) => <div className="text-medium">{cell.value || '-'}</div>,
-      },
-      {
-        Header: 'เงินเดือน',
-        accessor: 'total_income',
-        sortable: false,
-        headerClassName: 'text-medium text-muted-re text-end',
-        Cell: ({ cell }) => <div className="text-medium text-end">{cell.value || '-'}</div>,
       },
       {
         Header: 'จัดการข้อมูล',
         accessor: 'action',
         sortable: false,
-        headerClassName: 'text-medium text-muted-re',
-        Cell: ({ cell, row }) => (
-          <div className="text-medium d-flex flex-row gap-2 icon-hover" style={{ width: '4rem' }}>
+        headerClassName: 'text-medium text-muted-re text-end',
+        Cell: ({ row }) => (
+          <div className="text-medium icon-hover text-end">
             <div
               className="cursor-pointer"
               style={role?.can_delete === 0 ? { opacity: '0.5', cursor: 'auto' } : { cursor: 'pointer' }}
@@ -125,17 +92,7 @@ const Salary = () => {
                 setGetId(row.original.id);
               }}
             >
-              <img src="/img/icons/edit.png" alt="edit" />
-            </div>
-            <div
-              className="cursor-pointer"
-              style={role?.can_delete === 0 ? { opacity: '0.5', cursor: 'auto' } : { cursor: 'pointer' }}
-              onClick={() => {
-                setGetIdToDelete(row.original.id);
-                setIsDeleting(true);
-              }}
-            >
-              <img src="/img/icons/delete.png" alt="delete" />
+              <img style={{ width: '30px' }} src="/img/icons/pdf.png" alt="pdf" />
             </div>
           </div>
         ),
@@ -182,8 +139,8 @@ const Salary = () => {
   };
 
   const { isFetching, refetch } = useQuery(
-    ['searchBill', filter, pageSize, sortBy, page],
-    () => searchBill({ filter, per_page: pageSize, page, sortBy: sortByFromTable(sortBy) }), // ใช้ฟังก์ชันนี้แทนการเรียกโดยตรง
+    ['searchSalary', filter, pageSize, sortBy, page],
+    () => searchSalary({ filter, per_page: pageSize, page, sortBy: sortByFromTable(sortBy) }), // ใช้ฟังก์ชันนี้แทนการเรียกโดยตรง
     {
       refetchOnWindowFocus: false,
       onSuccess(resp) {
@@ -247,7 +204,7 @@ const Salary = () => {
         // addButton={{ label: f({ id: 'bill.field.add' }), link: '/bill/new' }}
         isHideBtnAdd={role?.can_create === 0}
       />
-      <Table tableInstance={tableInstance} isLoading={isFetching} isSelectYear isCompany isSearchButton hideControlSearch hideControlsStatus />
+      <Table tableInstance={tableInstance} isLoading={isFetching} isSelectYear isSearchButton hideControlSearch hideControlsStatus />
 
       <ConfirmDeleteModal
         show={isDeleting}

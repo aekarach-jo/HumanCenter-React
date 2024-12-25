@@ -48,25 +48,17 @@ const Table = ({
   rowProps,
   customStyle,
   isMovement,
-  isDepartment = false,
-  isPaymentStatus = false,
-  isVerify = false,
-  isCustomerLevel = false,
   statusOptions = [],
   hideControlSearch = false,
-  hideControlsStatusParcel = false,
-  hideControlsStatusBill = false,
   hideControlsPageSize = false,
   hideControlsStatus = false,
-  hideControlsStatusVerify = false,
-  hideControlsDateRange = false,
   hideAddDelete = false,
-  isCheckAll = false,
-  isShipping = false,
+  isSearchButton = false,
   isParcel = false,
+  isSelectYear = false,
+  isEmployee = false,
+  isCompany = false,
   isPage = true,
-  isCurrencyDate = false,
-  onClickShipped = () => {},
   ...tableConfig
 }) => {
   const columns = React.useMemo(() => {
@@ -208,37 +200,18 @@ const Table = ({
               <FilterForm
                 tableInstance={tableInstanceContainer}
                 hideControlSearch={hideControlSearch}
-                isDepartment={isDepartment}
-                isCustomerLevel={isCustomerLevel}
-                isPaymentStatus={isPaymentStatus}
-                isVerify={isVerify}
+                isSelectYear={isSelectYear}
+                isCompany={isCompany}
                 statusOptions={statusOptions}
-                hideControlsStatusBill={hideControlsStatusBill}
-                hideControlsStatusVerify={hideControlsStatusVerify}
                 hideControlsStatus={hideControlsStatus}
-                hideControlsDateRange={hideControlsDateRange}
-                hideControlsStatusParcel={hideControlsStatusParcel}
-                isShipping={isShipping}
+                isEmployee={isEmployee}
+                isSearchButton={isSearchButton}
                 isLoading={isLoading}
-                isCurrencyDate={isCurrencyDate}
-                onClickShipped={onClickShipped}
               />
               {!isParcel ? (
-                <TableBodyParcel
-                  className="react-table rows"
-                  isCheckAll={isCheckAll}
-                  tableInstance={tableInstanceContainer}
-                  customStyle={customStyle}
-                  rowProps={rowProps}
-                />
+                <TableBodyParcel className="react-table rows" tableInstance={tableInstanceContainer} customStyle={customStyle} rowProps={rowProps} />
               ) : (
-                <TableBody
-                  className="react-table rows"
-                  tableInstance={tableInstanceContainer}
-                  isCheckAll={isCheckAll}
-                  customStyle={customStyle}
-                  rowProps={rowProps}
-                />
+                <TableBody className="react-table rows" tableInstance={tableInstanceContainer} customStyle={customStyle} rowProps={rowProps} />
               )}
               <TableDataNotFound tableInstance={tableInstanceContainer} />
               <TablePagination tableInstance={tableInstanceContainer} />
