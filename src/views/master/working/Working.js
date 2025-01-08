@@ -57,15 +57,15 @@ const Working = () => {
         accessor: 'year',
         sortable: false,
         headerClassName: 'text-medium text-muted-re',
-        Cell: ({ cell }) => <div className="text-medium">{moment.utc(cell?.value || new Date()).format('YYYY') || '-'}</div>,
+        Cell: ({ cell }) => <div className="text-medium">{moment.utc(cell?.row?.original?.round_start_at || new Date()).format('YYYY') || '-'}</div>,
       },
       {
         Header: 'เดือน',
-        accessor: 'month',
+        accessor: 'round_start_at',
         sortable: false,
         headerClassName: 'text-medium text-muted-re',
         Cell: ({ cell }) => {
-          const month = moment.utc(cell?.value || new Date()).format('MM');
+          const month = moment.utc(cell?.value).format('MM');
           const monthNames = [
             'มกราคม',
             'กุมภาพันธ์',

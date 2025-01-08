@@ -188,7 +188,7 @@ const InformationForm = ({ id, mode }) => {
       last_name_en: values.last_name_en,
       branch_id: values.branch_id,
       username: values.username,
-      password: values.password,
+      password: values?.password ? values?.password : undefined,
       description: values.description,
       emp_image: values.emp_image,
       start_at: values.start_at === 'Invalid date' ? null : values.start_at,

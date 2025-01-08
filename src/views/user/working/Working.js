@@ -122,9 +122,9 @@ const Working = () => {
         headerClassName: 'text-medium text-muted-re',
         Cell: ({ cell, row }) => {
           return (
-            <div className="text-medium d-flex flex-row gap-1 icon-hover" style={{ width: '4rem' }}>
+            <div className="text-medium d-flex flex-row gap-1 icon-hover align-items-center justify-content-center" style={{ width: '4rem' }}>
               <div>
-                <NavLink to={`/master/working-detail/${row.original.id}`} className=" text-truncate h-100 d-flex align-items-center">
+                <NavLink to={`/user/working/working-detail/${row.original.id}`} className=" text-truncate h-100 d-flex align-items-center">
                   <img src="/img/icons/edit.png" alt="edit" style={role?.can_view === 0 ? { opacity: '0.5' } : { cursor: 'pointer' }} />
                 </NavLink>
               </div>

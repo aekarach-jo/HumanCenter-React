@@ -53,7 +53,7 @@ const Salary = () => {
     return [
       {
         Header: 'ปี',
-        accessor: 'year',
+        accessor: 'created_at',
         sortable: false,
         headerClassName: 'text-medium text-muted-re',
         Cell: ({ cell }) => <div className="text-medium">{moment.utc(cell?.value || new Date()).format('YYYY') || '-'}</div>,
@@ -64,7 +64,7 @@ const Salary = () => {
         sortable: false,
         headerClassName: 'text-medium text-muted-re',
         Cell: ({ cell }) => {
-          const month = moment.utc(cell?.value || new Date()).format('MM');
+          const month = moment.utc(cell?.row?.original?.created_at || new Date()).format('MM');
           const monthNames = [
             'มกราคม',
             'กุมภาพันธ์',

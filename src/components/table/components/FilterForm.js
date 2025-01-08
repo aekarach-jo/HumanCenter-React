@@ -10,7 +10,7 @@ import ControlsSearch from './ControlsSearch';
 import DatepickerMonth from './DatepickerMonth';
 import DatepickerYear from './DatepickerYear';
 
-const initialValues = { year: '', month: '', company_id: '', employee_no: '', national_card_no: '', status: true };
+const initialValues = { year: '', month: '', company_id: '', employee_no: '', national_card_no: '', searchText: '', status: true };
 const statusOptions = [
   { value: 'confirmed', label: 'ยืนยันแล้ว' },
   { value: 'wait_edit', label: 'รอแก้ไข' },
@@ -31,6 +31,7 @@ const FilterForm = ({ tableInstance, hideControlSearch, isSelectYear, hideContro
 
       dataResult = {
         filters: filtersArray.join(','),
+        searchText: values?.searchText ? `${values.searchText}` : undefined,
         company: values?.company_id ? `${values.company_id}` : undefined,
         year: values?.year !== '' ? `${values.year}` : undefined,
         month: values?.month !== '' ? `${values.month}` : undefined,
@@ -116,7 +117,7 @@ const FilterForm = ({ tableInstance, hideControlSearch, isSelectYear, hideContro
           </Col>
           <Col sm="12" md="12" lg="3">
             <Form.Label className="col-form-label required">ชื่อ-สกุล</Form.Label>
-            <Form.Control type="text" name="last_name_th" onChange={handleChange} value={values?.last_name_th} />
+            <Form.Control type="text" name="searchText" onChange={handleChange} value={values?.searchText} />
           </Col>
           <Col sm="12" md="12" lg="3">
             <Form.Label className="col-form-label required">เลขบัตรประชาชน</Form.Label>

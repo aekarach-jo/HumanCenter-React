@@ -17,7 +17,7 @@ const App = () => {
   const { currentUser } = useSelector((state) => state.auth);
 
   const isLogin = !!token;
-  const routes = useMemo(() => getRoutes({ data: routesAndMenuItems, isLogin, userRole: 'admin' }), [currentUser?.user?.roles, isLogin]);
+  const routes = useMemo(() => getRoutes({ data: routesAndMenuItems, isLogin, userRole: currentUser?.role }), [currentUser?.role, isLogin]);
   const fallback = useMemo(() => <Loading />, []);
   if (routes) {
     return (

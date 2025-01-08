@@ -110,7 +110,7 @@ function createTokenQuery({ queryKey = 'token', tokenExpired, refreshExpired, se
         setIsFetching(false);
         setData(token);
         setTokenValue(token);
-        dispatch(setCurrentUser(token));
+        // dispatch(setCurrentUser(token));
         localStorage.setItem('login_date', new Date());
         return token;
       } catch (loginError) {

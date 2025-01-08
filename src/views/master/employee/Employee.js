@@ -153,7 +153,7 @@ const Employee = () => {
           return (
             <div className="text-medium d-flex flex-row justify-content-center align-items-center gap-2 icon-hover" style={{ width: '4rem' }}>
               <div>
-                <NavLink to={`/master/employee-detail/${row.original.id}`} className=" text-truncate h-100 d-flex align-items-center">
+                <NavLink to={`/master/employee-detail/${row.original.id}?view`} className=" text-truncate h-100 d-flex align-items-center">
                   <img src="/img/icons/show.png" alt="show" style={role?.can_view === 0 ? { opacity: '0.5' } : { cursor: 'pointer' }} />
                 </NavLink>
               </div>

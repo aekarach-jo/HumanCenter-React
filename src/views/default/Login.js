@@ -30,6 +30,7 @@ const Login = () => {
     try {
       await requestLogin(values, true);
       replace('/');
+      window.location.reload();
     } catch (err) {
       console.error('Login error :  ', err);
     }

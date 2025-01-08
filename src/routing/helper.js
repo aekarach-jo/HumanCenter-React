@@ -2,10 +2,6 @@ import { IS_AUTH_GUARD_ACTIVE, DEFAULT_PATHS } from 'config.js';
 
 const userHasRole = (routeRoles, userRole) => {
   if (!userRole) return false;
-  console.log(routeRoles);
-  console.log(userRole);
-  console.log(routeRoles.includes(userRole));
-  
   return routeRoles.includes(userRole);
 };
 

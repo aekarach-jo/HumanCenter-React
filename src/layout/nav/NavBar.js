@@ -11,12 +11,10 @@ import NavMobileButtons from './NavMobileButtons';
 
 const NavBar = ({ children }) => {
   useLayout();
-  const dispatch = useDispatch();
   const { pathname } = useLocation();
   const { push } = useHistory();
   const getName = JSON.parse(localStorage.getItem('token'));
   useEffect(() => {
-    dispatch(setCurrentUser(getName));
     document.documentElement.click();
     window.scrollTo(0, 0);
   }, [pathname]);

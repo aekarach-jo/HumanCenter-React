@@ -8,6 +8,7 @@ import { useMutation, useQuery } from 'react-query';
 import { useFormik } from 'formik';
 import { toast } from 'react-toastify';
 import './style.css';
+import useConvert from 'hooks/useConvert';
 
 const callAddSalary = async ({ data = [], totalIncome = 0, id }) => {
   const res = await request({ url: `/salarys/${id}`, method: 'PATCH', data: { sub_salaries: data, total_income: totalIncome } });
@@ -16,8 +17,10 @@ const callAddSalary = async ({ data = [], totalIncome = 0, id }) => {
 
 const SalaryModal = ({ id, setGetId, titleText, confirmText, okText, cancelText, show, className, loading, onCancel, ...rest }) => {
   const [idSalary, setIdSalary] = React.useState(id);
+  const { useConvertCurrency } = useConvert();
+
   const getSalaryFn = (isx) => () =>
-    request({ url: `${SERVICE_URL}/salarys/${isx}` }).then((data) => {
+    request({ url: `${SERVICE_URL}/salarys/${isx}?slip=1` }).then((data) => {
       return data.data.data;
     });
 
@@ -87,6 +90,7 @@ const SalaryModal = ({ id, setGetId, titleText, confirmText, okText, cancelText,
     //   setIdSalary(values?.id);
     // }
   };
+  const sumAmount = values?.sub_salaries.reduce((acc, item) => acc + item?.income * item?.count, 0);
 
   return (
     <Modal
@@ -118,7 +122,7 @@ const SalaryModal = ({ id, setGetId, titleText, confirmText, okText, cancelText,
         >
           <div>
             <div className="header">
-              <p>บริษัท ฮิวแมนเซนเตอร์ จำกัด</p>
+              <h3>บริษัท ฮิวแมนเซนเตอร์ จำกัด</h3>
               <p>317/31หมู่ที่ 3 ตำบล บ่อวิน อำเภอ ศรีราชา จังหวัด ชลบุรี 20230 โทร : 033-681259</p>
               <p>317/31 M. 3 T. BORWIN A. SRIRACHA CHONBURI 20230 TEL. 033-681259</p>
             </div>
@@ -153,18 +157,18 @@ const SalaryModal = ({ id, setGetId, titleText, confirmText, okText, cancelText,
                 </tr>
               </thead>
               <tbody>
-                {values?.sub_salaries2?.map((item, index) => {
+                {values?.sub_salaries?.map((item, index) => {
                   return (
                     <tr key={index}>
                       <td>{index + 1}</td>
                       <td>{item?.type_salary_name}</td>
-                      <td>{item?.income}</td>
+                      <td className="text-end">{Number(item?.income).toFixed(2)}</td>
                       <td>บาท</td>
                       <td>จำนวน</td>
                       <td>{item?.count}</td>
-                      <td>{item?.unit_sub}</td>
+                      <td>{(item?.unit_sub === 'hours' && 'ชม.') || (item?.unit_sub === 'days' && 'วัน')}</td>
                       <td>=</td>
-                      <td>{item?.income * item?.count}</td>
+                      <td className="text-end">{Number(item?.income * item?.count).toFixed(2)}</td>
                       <td>บาท</td>
                     </tr>
                   );
@@ -172,7 +176,7 @@ const SalaryModal = ({ id, setGetId, titleText, confirmText, okText, cancelText,
                 <tr>
                   <td />
                   <td colSpan={7}>รวมรายรับ</td>
-                  <td>21,784.84</td>
+                  <td>{useConvertCurrency(sumAmount, 2)}</td>
                   <td>บาท</td>
                 </tr>
               </tbody>
